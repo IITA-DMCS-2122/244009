@@ -1,4 +1,4 @@
-package p.lodz.pl.todoapp.models;
+package p.lodz.pl.todoapp.models.documents;
 
 import lombok.AccessLevel;
 import lombok.Data;

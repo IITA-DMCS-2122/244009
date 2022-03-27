@@ -6,10 +6,11 @@ import org.springframework.stereotype.Service;
 import p.lodz.pl.todoapp.dtos.TodoItemAddDto;
 import p.lodz.pl.todoapp.dtos.TodoItemEditDto;
 import p.lodz.pl.todoapp.models.TodoItem;
-import p.lodz.pl.todoapp.models.TodoItemDocument;
-import p.lodz.pl.todoapp.models.TodoItemEntity;
-import p.lodz.pl.todoapp.repos.TodoItemDocumentRepository;
-import p.lodz.pl.todoapp.repos.TodoItemEntityRepository;
+import p.lodz.pl.todoapp.models.documents.TodoItemDocument;
+import p.lodz.pl.todoapp.models.entities.TodoItemEntity;
+import p.lodz.pl.todoapp.repositories.analytics.TodoItemEntityAnalyticsRepository;
+import p.lodz.pl.todoapp.repositories.primary.TodoItemDocumentRepository;
+import p.lodz.pl.todoapp.repositories.primary.TodoItemEntityPrimaryRepository;
 import p.lodz.pl.todoapp.utils.TodoItemSource;
 
 import javax.transaction.Transactional;
@@ -20,7 +21,8 @@ import java.util.List;
 @AllArgsConstructor
 public class TodoItemService {
 
-    private final TodoItemEntityRepository todoItemEntityRepository;
+    private final TodoItemEntityPrimaryRepository todoItemEntityPrimaryRepository;
+    private final TodoItemEntityAnalyticsRepository todoItemEntityAnalyticsRepository;
     private final TodoItemDocumentRepository todoItemDocumentRepository;
 
     public List<TodoItem> getAll() {
@@ -32,7 +34,7 @@ public class TodoItemService {
         List<TodoItem> todoItems;
         switch (source) {
             case POSTGRES:
-                todoItems = new ArrayList<>(todoItemEntityRepository.findAll());
+                todoItems = new ArrayList<>(todoItemEntityPrimaryRepository.findAll());
                 break;
             case MONGODB:
                 todoItems = new ArrayList<>(todoItemDocumentRepository.findAll());
@@ -53,7 +55,7 @@ public class TodoItemService {
         TodoItem todoItem;
         switch (source) {
             case POSTGRES:
-                todoItem = todoItemEntityRepository.findByUuid(uuid);
+                todoItem = todoItemEntityPrimaryRepository.findByUuid(uuid);
                 break;
             case MONGODB:
                 todoItem = todoItemDocumentRepository.findByUuid(uuid);
@@ -66,7 +68,8 @@ public class TodoItemService {
 
     public TodoItem add(TodoItemAddDto todoItemAddDto) {
         TodoItemEntity todoItemEntity = new TodoItemEntity(todoItemAddDto);
-        todoItemEntityRepository.save(todoItemEntity);
+        todoItemEntityPrimaryRepository.save(todoItemEntity);
+        todoItemEntityAnalyticsRepository.save(todoItemEntity);
         todoItemDocumentRepository.save(new TodoItemDocument(todoItemEntity));
         return todoItemEntity;
     }
@@ -76,15 +79,15 @@ public class TodoItemService {
         if(todoItem == null) throw new Exception("Not found");
 
         todoItem.update(todoItemEditDto);
-        todoItemEntityRepository.save(new TodoItemEntity(todoItem));
+        todoItemEntityPrimaryRepository.save(new TodoItemEntity(todoItem));
+        todoItemEntityAnalyticsRepository.save(new TodoItemEntity(todoItem));
         todoItemDocumentRepository.save(new TodoItemDocument(todoItem));
 
         return todoItem;
     }
 
-    @Transactional
     public void delete(String uuid) {
-        todoItemEntityRepository.deleteByUuid(uuid);
+        todoItemEntityPrimaryRepository.deleteByUuid(uuid);
         todoItemDocumentRepository.deleteByUuid(uuid);
     }
 }
