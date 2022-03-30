@@ -23,6 +23,15 @@ services:
     volumes:
       - db:/var/lib/mongo/data
 
+  elasticsearch:
+    image: elasticsearch:8.1.1
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "xpack.security.enabled=false"
+      - "discovery.type=single-node"
+    ports:
+      - "9200:9200"
+
 volumes:
   db:
     driver: local

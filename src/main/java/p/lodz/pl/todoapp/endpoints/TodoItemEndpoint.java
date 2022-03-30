@@ -100,4 +100,9 @@ public class TodoItemEndpoint {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @GetMapping("todoitem/search")
+    public ResponseEntity<List<TodoItemGetDto>> search(@RequestParam("query") String query) {
+        return ResponseEntity.ok(todoItemService.search(query));
+    }
 }

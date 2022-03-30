@@ -5,17 +5,20 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import p.lodz.pl.todoapp.dtos.TodoItemAddDto;
 import p.lodz.pl.todoapp.dtos.TodoItemEditDto;
+import p.lodz.pl.todoapp.dtos.TodoItemGetDto;
 import p.lodz.pl.todoapp.models.TodoItem;
 import p.lodz.pl.todoapp.models.documents.TodoItemDocument;
 import p.lodz.pl.todoapp.models.entities.TodoItemEntity;
 import p.lodz.pl.todoapp.repositories.analytics.TodoItemEntityAnalyticsRepository;
 import p.lodz.pl.todoapp.repositories.primary.TodoItemDocumentRepository;
 import p.lodz.pl.todoapp.repositories.primary.TodoItemEntityPrimaryRepository;
+import p.lodz.pl.todoapp.repositories.primary.TodoItemIndexedRepository;
 import p.lodz.pl.todoapp.utils.TodoItemSource;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -24,6 +27,7 @@ public class TodoItemService {
     private final TodoItemEntityPrimaryRepository todoItemEntityPrimaryRepository;
     private final TodoItemEntityAnalyticsRepository todoItemEntityAnalyticsRepository;
     private final TodoItemDocumentRepository todoItemDocumentRepository;
+    private final TodoItemIndexedRepository todoItemIndexedRepository;
 
     public List<TodoItem> getAll() {
         // TODO: 25.03.2022 synchronize databases
@@ -89,5 +93,9 @@ public class TodoItemService {
     public void delete(String uuid) {
         todoItemEntityPrimaryRepository.deleteByUuid(uuid);
         todoItemDocumentRepository.deleteByUuid(uuid);
+    }
+
+    public List<TodoItemGetDto> search(String query) {
+        return todoItemIndexedRepository.search(query).stream().map(TodoItemGetDto::new).collect(Collectors.toList());
     }
 }

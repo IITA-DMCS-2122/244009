@@ -34,7 +34,7 @@ public class AnalyticsDatasourceConfiguration {
             .dataSource(dataSource())
             .packages("p.lodz.pl.todoapp.models.entities")
             .properties(Map.of(
-                "hibernate.hbm2ddl.auto", "create"
+                "hibernate.hbm2ddl.auto", "update"
             ))
             .build();
     }

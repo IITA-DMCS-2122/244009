@@ -3,6 +3,8 @@ package p.lodz.pl.todoapp.models.entities;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import p.lodz.pl.todoapp.dtos.TodoItemAddDto;
 import p.lodz.pl.todoapp.dtos.TodoItemEditDto;
 import p.lodz.pl.todoapp.models.TodoItem;
@@ -13,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Entity(name = "todo_item")
+@Indexed
 @Data
 public class TodoItemEntity implements TodoItem {
 
@@ -26,8 +29,10 @@ public class TodoItemEntity implements TodoItem {
 
     @NotNull
     @NotBlank
+    @FullTextField
     private String title;
 
+    @FullTextField
     private String description;
 
     @NotNull
