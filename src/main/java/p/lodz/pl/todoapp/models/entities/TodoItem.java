@@ -7,7 +7,6 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextFi
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import p.lodz.pl.todoapp.dtos.TodoItemAddDto;
 import p.lodz.pl.todoapp.dtos.TodoItemEditDto;
-import p.lodz.pl.todoapp.models.TodoItem;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -17,7 +16,7 @@ import java.util.UUID;
 @Entity(name = "todo_item")
 @Indexed
 @Data
-public class TodoItemEntity implements TodoItem {
+public class TodoItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -41,9 +40,9 @@ public class TodoItemEntity implements TodoItem {
 
     public Boolean isRealized() { return realized; }
 
-    public TodoItemEntity() {}
+    public TodoItem() {}
 
-    public TodoItemEntity(TodoItem todoItem) {
+    public TodoItem(TodoItem todoItem) {
         this.id = todoItem.getId();
         this.uuid = todoItem.getUuid();
         this.title = todoItem.getTitle();
@@ -51,7 +50,7 @@ public class TodoItemEntity implements TodoItem {
         this.realized = todoItem.isRealized();
     }
 
-    public TodoItemEntity(TodoItemAddDto todoItemAddDto) {
+    public TodoItem(TodoItemAddDto todoItemAddDto) {
         this.setId(0L);
         this.setUuid(UUID.randomUUID().toString());
         this.setTitle(todoItemAddDto.getTitle());

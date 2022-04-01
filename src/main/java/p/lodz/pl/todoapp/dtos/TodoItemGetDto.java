@@ -1,7 +1,7 @@
 package p.lodz.pl.todoapp.dtos;
 
 import lombok.Data;
-import p.lodz.pl.todoapp.models.TodoItem;
+import p.lodz.pl.todoapp.models.entities.TodoItem;
 
 @Data
 public class TodoItemGetDto {
